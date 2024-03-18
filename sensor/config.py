@@ -13,9 +13,8 @@ from dataclasses import dataclass
 class EnvironmentVariable:
     uri:str = os.getenv("uri")
 
-
-
 # Object of data class
 env_var = EnvironmentVariable()
 
 client = MongoClient(env_var.uri, server_api=ServerApi('1'))
+TARGET_COLUMN = "class"
