@@ -5,7 +5,11 @@ import pandas as pd
 import json
 import os
 from dataclasses import dataclass
+from dotenv import load_dotenv
 
+
+# Load environment variable
+load_dotenv()
 
 # Create a new client and connect to the server
 
