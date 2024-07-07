@@ -13,10 +13,9 @@ from sensor.config import TARGET_COLUMN
 
 class DataValidation:
 
-    def __init__(self,
-                    data_validation_config:config_entity.DataValidationConfig,
-                    data_ingestion_artifact:artifact_entity.DataIngestionArtifact):
-        try:
+    def __init__(self, data_validation_config = config_entity.DataValidationConfig, 
+                 data_ingestion_artifact = artifact_entity.DataIngestionArtifact):
+        try: 
             logging.info(f"{'>>'*20} Data Validation {'<<'*20}")
             self.data_validation_config = data_validation_config
             self.data_ingestion_artifact=data_ingestion_artifact
@@ -39,7 +38,7 @@ class DataValidation:
             threshold = self.data_validation_config.missing_threshold
             null_report = df.isna().sum()/df.shape[0]
             #selecting column name which contains null
-            logging.info(f"selecting column name which contains null above to {threshold}")
+            logging.info(f"selecting column name which contains null above {threshold}")
             drop_column_names = null_report[null_report>threshold].index
 
             logging.info(f"Columns to drop: {list(drop_column_names)}")
@@ -49,7 +48,8 @@ class DataValidation:
             #return None no columns left
             if len(df.columns)==0:
                 return None
-            return df
+            else:
+                return df
         except Exception as e:
             raise SensorException(e, sys)
         
@@ -63,13 +63,14 @@ class DataValidation:
             missing_columns = []
             for base_column in base_columns:
                 if base_column not in current_columns:
-                    logging.info(f"Column: [{base} is not available.]")
+                    logging.info(f"Column: [{base_column} is not available.]")
                     missing_columns.append(base_column)
 
             if len(missing_columns)>0:
                 self.validation_error[report_key_name]=missing_columns
                 return False
-            return True
+            else: 
+                return True
         except Exception as e:
             raise SensorException(e, sys)
 
@@ -85,7 +86,7 @@ class DataValidation:
                 #Null hypothesis is that both column data drawn from same distrubtion
                 
                 logging.info(f"Hypothesis {base_column}: {base_data.dtype}, {current_data.dtype} ")
-                same_distribution =ks_2samp(base_data,current_data)
+                same_distribution =ks_2samp(base_data,current_data,nan_policy='omit')
 
                 if same_distribution.pvalue>0.05:
                     #We are accepting null hypothesis
@@ -108,17 +109,19 @@ class DataValidation:
         try:
             logging.info(f"Reading base dataframe")
             base_df = pd.read_csv(self.data_validation_config.base_file_path)
-            base_df.replace({"na":np.NAN},inplace=True)
+            base_df.replace({"na":np.NaN},inplace=True)
             logging.info(f"Replace na value in base df")
             #base_df has na as null
-            logging.info(f"Drop null values colums from base df")
+            logging.info(f"Drop null values columns from base df")
             base_df=self.drop_missing_values_columns(df=base_df,report_key_name="missing_values_within_base_dataset")
 
             logging.info(f"Reading train dataframe")
             train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
+            #train_df.replace({"na":np.NaN},inplace=True)
             logging.info(f"Reading test dataframe")
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
-
+            #test_df.replace({"na":np.NaN},inplace=True)
+            
             logging.info(f"Drop null values colums from train df")
             train_df = self.drop_missing_values_columns(df=train_df,report_key_name="missing_values_within_train_dataset")
             logging.info(f"Drop null values colums from test df")
