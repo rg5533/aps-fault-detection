@@ -45,7 +45,7 @@ class DataTransformationConfig:
         self.transform_object_path = os.path.join(self.data_transformation_dir, "transformer",TRANSFORMER_OBJECT_FILE_NAME)
         self.transformed_train_path = os.path.join(self.data_transformation_dir,"transformed",TRAIN_FILE_NAME)
         self.transformed_test_path = os.path.join(self.data_transformation_dir,"transformed",TEST_FILE_NAME)
-        self.label_encoder_path = os.path.join(self.data_transformation_dir,"target_encoder",TARGET_ENCODER_OBJECT_FILE)
+        self.target_encoder_path = os.path.join(self.data_transformation_dir,"target_encoder",TARGET_ENCODER_OBJECT_FILE)
         
 
 class ModelTrainerConfig:...
